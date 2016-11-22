@@ -1,0 +1,111 @@
+﻿========================================================
+Proyecto gestión de fichado de profesores. FaceControl
+========================================================
+
+Requisitos:
+
+- Grupo de administradores estarán en un grupo específico de LDAP.
+- Los profesores se loguearan vía LDAP
+
+- Parte de administración del Sistema
+-- Configuración general:
+	--- Grupo LDAP de administración.
+	--- Grupo LDAP de profesorado.
+
+-- Configuración del Centro:
+
+	--- Nombre del Centro
+	--- Dirección/Teléfono/Email del centro (para imprimir en docs)
+	--- URL de página web.
+	--- URL con el logo del Centro (para generación de docs PDF)
+	--- Rango en minutos para fichar correctamente (15:00 por defecto)
+	--- Rango en minutos para estadísticas de puntualidad (05:00  por defecto) ?
+	--- Horas de comprobación de faltas (15:30 y 23:00 por ejemplo)
+
+-- Alta de aulas y zonas del centro (nombre, abreviatura, extensión telefónica, subred IP...)
+
+-- Configuración sistema de Incidencias
+	Días de actividad de control de faltas.
+	Bot Telegram para notificar incidencia (???)
+
+--- Listado de permisos  art 03, art 04... etc.. para justificar incidencias)
+
+-- Alta de Grupos/Cursos (DAI, DAW, etc..etc.)
+-- Alta de módulos (FOL, BD, etc..) y asociación
+
+-- El profesor indicará en que grupos imparte y automáticamente podrá seleccionar los módulos
+	de dichos grupos + los módulos comunes (Tut. Alumnos + Tut. Padres + Guardias de Red + Guardias Biblioteca, etc..)
+
+
+-- Cada profesor confeccionará su horario (cuando el jefe de estudios se lo haya proporcionado)
+	Para ello seleccionará la hora, módulo que imparte y aula.
+
+-- Cada Profesor podrá imprimir su horario en formato PDF.
+
+-- Los administradores podrán editar el horario de cq. profesor.
+
+-- Los usuarios podrán editar su perfil e indicar cómo quieren recibir las notificaciones (email, telegram..)
+
+-- En Informes se podrá imprimir informe de faltas por profesor en formato PDF.
+
+-- Las faltas se podrán justificar en la propia plataforma (se genera una falta y se va actualizando el mismo mensaje)
+
+-- Extras :
+	Localización de profesores (como resultado mostrará en que aula está, si tendría que estar o no en el centro y que está impartiendo)
+	Notificación de faltas a través de un Bot (Se proporcionará más adelante el nombre del bot y el token para su programación)
+	Consulta de horarios a través del Bot, por ejemplo.
+	Más ideas sobre su uso en el Bot.. Justificación de faltas, por ejemplo...?
+
+
+-- Estructura de la tabla de registro de profesores (acregnom "no se puede modificar", con datos de ejemplo)
+-- De esta tabla interesa el CodUser (cuando se loguea un profe en el sistema si no tiene CodUser asignado en su perfil se le
+	asignará uno automáticamente (el siguiente al último asignado))
+	-- Ese CodigoUser se meterá manualmente en la máquina cuando se registre la cara de un usuario.
+	-- Puede ser un código autonumérico en la tabla de usuarios (el login del usuario en el sistema no permitirá duplicados).
+
+-------------------------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `acregnom`
+--
+
+CREATE TABLE IF NOT EXISTS `acregnom` (
+`Id` bigint(20) NOT NULL,
+  `CodUser` varchar(15) NOT NULL DEFAULT '',
+  `CodMov` int(11) NOT NULL DEFAULT '0',
+  `Procedencia` int(11) NOT NULL DEFAULT '0',
+  `Canal` int(10) unsigned NOT NULL DEFAULT '0',
+  `Mtv` int(11) NOT NULL DEFAULT '0',
+  `Fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Empresa` varchar(15) NOT NULL DEFAULT '',
+  `Situacion` int(10) unsigned NOT NULL DEFAULT '0'
+) ENGINE=MyISAM AUTO_INCREMENT=248905 DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `acregnom`
+--
+
+INSERT INTO `acregnom` (`Id`, `CodUser`, `CodMov`, `Procedencia`, `Canal`, `Mtv`, `Fecha`, `Empresa`, `Situacion`) VALUES
+(248911, '1', 0, 0, 0, 0, '2015-06-12 10:54:18', '0', 0),
+(248910, '4', 0, 0, 0, 0, '2015-06-12 10:54:13', '0', 0),
+(248909, '1', 0, 0, 0, 0, '2015-06-12 10:47:47', '0', 0),
+(248908, '1', 0, 0, 0, 0, '2015-06-12 10:42:48', '0', 0),
+(248907, '1', 0, 0, 0, 0, '2015-06-12 10:34:07', '0', 0),
+(248906, '1', 0, 0, 0, 0, '2015-06-12 10:27:21', '0', 0),
+(248905, '1', 0, 0, 0, 0, '2015-06-12 10:23:03', '0', 0),
+(248904, '1', 0, 0, 0, 0, '2015-06-12 10:21:32', '0', 0);
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `acregnom`
+--
+ALTER TABLE `acregnom`
+ ADD PRIMARY KEY (`Id`), ADD KEY `Index_2` (`CodUser`,`Fecha`);
+
+-------------------------------------------------------------------------
+
+
+Habrá que programar una tarea de CRON que compruebe al final de la mañana y al final del día los profesores que no han fichado.
